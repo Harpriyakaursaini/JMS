@@ -1,0 +1,43 @@
+package jms.har;
+
+import javax.jms.MapMessage;
+import javax.jms.Message;
+import javax.jms.ObjectMessage;
+import javax.jms.Queue;
+import javax.naming.InitialContext;
+
+import org.springframework.jms.JmsException;
+
+public class ReservationListener implements javax.jms.MessageListener {
+public void onMessage(Message msg)
+{
+ObjectMessage objmsg=(ObjectMessage) msg;
+
+try(ActiveMQConnectionFactory cf=new ActiveMQConnectionFactory();
+JmsContext jmscontext=cf.createContext)
+{
+InitialContext intialcontext=new InitialContext();
+Queue replyQueue=(Queue)initialcontext.lookup("queue/replyQueue");
+MapMessage repmsg=jmscontext.createMapMessage();
+Passenger pass=(Passenger) objmsg.getObject();
+if(pass.getFirstName().equals("harpriya") && pass.getId()==1)
+{
+repmsg.setBoolean("reserved", true);
+
+}
+else
+{
+repmsg.setBoolean("reserved", false);
+}
+
+JmsProducer producer=jmscontext.createProducer();
+producer.send(replyQueue,repmsg);
+
+}
+catch(JmsException ex)
+{
+ex.printStackTrace();
+}
+}
+}
+
