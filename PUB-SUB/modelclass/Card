@@ -1,0 +1,38 @@
+package jms.har;
+
+import java.io.Serializable;
+
+public class Card  implements Serializable {
+private static final long serialVersionUID = 1L;
+private String pwd;
+private String firstName;
+private String lastName;
+private String userid;
+public String getPwd() {
+return pwd;
+}
+public void setPwd(String pwd) {
+this.pwd = pwd;
+}
+public String getFirstName() {
+return firstName;
+}
+public void setFirstName(String firstName) {
+this.firstName = firstName;
+}
+public String getLastName() {
+return lastName;
+}
+public void setLastName(String lastName) {
+this.lastName = lastName;
+}
+public String getUserid() {
+return userid;
+}
+public void setUserid(String userid) {
+this.userid = userid;
+}
+public static long getSerialversionuid() {
+return serialVersionUID;
+}
+}
