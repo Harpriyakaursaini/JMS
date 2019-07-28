@@ -1,0 +1,38 @@
+package jms.har;
+
+import javax.jms.JMSException;
+import javax.jms.MapMessage;
+import javax.jms.ObjectMessage;
+import javax.jms.Queue;
+import javax.naming.NamingException;
+
+public class CheckinApp {
+
+public static void main(String[] args) throws NamingException,JMSException
+{
+
+InitialContext intialcontext=new InitialContext();
+Queue requestQueue=(Queue)initialcontext.lookup("queue/requestQueue");
+Queue replyQueue=(Queue)initialcontext.lookup("queue/replyQueue");
+
+try(ActiveMQConnectionFactory cf=new ActiveMQConnectionFactory();
+JmsContext jmscontext=cf.createContext)
+{
+JmsProducer producer=jmscontext.createProducer();
+Passenger pass=new Passenger();
+pass.setId(1);
+pass.setFirstName("harpriya");
+pass.setLastName("kaur");
+pass.setEmail("har@yahoo.coom");
+pass.setPhone(293473845102l);
+ObjectMessage objmsg=jmscontext.creatObjectMessage();
+objmsg.setObject(pass);
+
+producer.send(requestQueue,objmsg);
+
+JMSConsumer consumer=cf.createConsumer(replyQueue);
+MapMessage msg=(MapMessage)consumer.recieve(30000);
+System.out.println(msg.getBoolean("reserved"));
+};
+}
+}
