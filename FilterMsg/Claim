@@ -1,0 +1,40 @@
+package jms.har;
+
+public class Claim {
+
+private String insuranceprovider;
+private String doctorname;
+private String hospId;
+private String doctortype;
+private float claimamt;
+public String getInsuranceprovider() {
+return insuranceprovider;
+}	
+public void setInsuranceprovider(String insuranceprovider) {
+this.insuranceprovider = insuranceprovider;
+}
+public String getDoctorname() {
+return doctorname;
+}
+public void setDoctorname(String doctorname) {
+this.doctorname = doctorname;
+}
+public String getHospId() {
+return hospId;
+}
+public void setHospId(String hospId) {
+this.hospId = hospId;
+}
+public String getDoctortype() {
+return doctortype;
+}
+public void setDoctortype(String doctortype) {
+this.doctortype = doctortype;
+}
+public float getClaimamt() {
+return claimamt;
+}
+public void setClaimamt(float claimamt) {
+this.claimamt = claimamt;
+}
+}
