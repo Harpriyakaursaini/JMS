@@ -1,0 +1,23 @@
+package jms.har;
+
+import javax.jms.JMSException;
+import javax.jms.Queue;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
+public class EligibiltycheckerApp {
+public static void main(String[] args) throws NamingException,JMSException
+{
+
+InitialContext intialcontext=new InitialContext();
+Queue requestQueue=(Queue)initialcontext.lookup("queue/requestQueue");
+
+try(ActiveMQConnectionFactory cf=new ActiveMQConnectionFactory();
+JmsContext jmscontext=cf.createContext)
+{
+JMSConsumer consumer=cf.createConsumer(requestQueue);
+consumer.setMessageListner(new ReservationListener() );
+Thread.sleep(10000);
+};
+}
+}
