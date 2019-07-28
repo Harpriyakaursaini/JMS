@@ -1,0 +1,24 @@
+public class Reservation {
+
+    public static void main(String[] args) throws NamingException {
+
+        InitialContext initialContext = new InitialContext();
+        Queue requestQueue = (Queue) initialContext.lookup("queue/requestQueue");
+
+        try(ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory();
+            JMSContext jmsContext = connectionFactory.createContext(JMSContext.SESSION_TRANSACTED)) {
+
+            JMSConsumer consumer = jmsContext.createConsumer(requestQueue);
+//            JMSConsumer consumer2 = jmsContext.createConsumer(requestQueue);
+            consumer.setMessageListener(new ReservationCheckListener());
+//            consumer2.setMessageListener(new ReservationCheckListener());
+
+//            Thread.sleep(10000);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+}
