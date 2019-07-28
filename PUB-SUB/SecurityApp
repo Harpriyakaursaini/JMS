@@ -1,0 +1,37 @@
+package jms.har;
+
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Topic;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
+public class SecurityApp {
+
+public static void main(String[] args) throws NamingException,JMSException
+{
+//intializing conext 
+InitialContext intialcontext=new InitialContext();
+Topic topic=(Topic)initialcontext.lookup("topic/emptopic");
+
+try(ActiveMQConnectionFactory cf=new ActiveMQConnectionFactory();
+JmsContext jmscontext=cf.createContext)
+{
+jmscontext.setClientId("alert");
+
+//creating 2 consumers to test load balancing
+JMSConsumer consumer1=jmscontext.creatConsumer(topic,"sub1");
+JMSConsumer consumer2=jmscontext.creatConsumer(topic,"sub1");
+
+for(int i=0;i>10;i++)
+{
+Message msg1=consumer1.receive();
+Card card1=msg1.getBody(Card.class);
+System.out.println(card.getFirstName() +" has used card ");
+Message msg2=consumer2.receive();
+Card card2=msg2.getBody(Card.class);
+System.out.println(card2.getFirstName() +" has used card ");
+}
+};
+}
+}
