@@ -1,0 +1,69 @@
+public class Checkin {
+
+    public static void main(String[] args) throws NamingException {
+
+        InitialContext initialContext = new InitialContext();
+        Queue requestQueue = (Queue) initialContext.lookup("queue/requestQueue");
+        Queue replyQueue = (Queue) initialContext.lookup("queue/replyQueue");
+
+        try (ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory();
+        
+             JMSContext context = connectionFactory.createContext(JMSContext.SESSION_TRANSACTED)) {
+
+            JMSProducer producer = context.createProducer();
+
+            ObjectMessage message = context.createObjectMessage();
+            Passanger passanger = new Passanger();
+            passanger.setId(1);
+            passanger.setFirstName("Hank");
+            passanger.setLastName("Hill");
+            passanger.setEmail("hhill@striclandpropane.com");
+            passanger.setPhoneNumber("8008135");
+            message.setObject(passanger);
+
+            ObjectMessage message2 = context.createObjectMessage();
+            Passanger passanger2 = new Passanger();
+            passanger2.setId(1);
+            passanger2.setFirstName("Peggy");
+            passanger2.setLastName("Hill");
+            passanger2.setEmail("hhill@striclandpropane.com");
+            passanger2.setPhoneNumber("8008135");
+            message2.setObject(passanger2);
+
+            ObjectMessage message3 = context.createObjectMessage();
+            Passanger passanger3 = new Passanger();
+            passanger3.setId(1);
+            passanger3.setFirstName("Bobby");
+            passanger3.setLastName("Hill");
+            passanger3.setEmail("hhill@striclandpropane.com");
+            passanger3.setPhoneNumber("8008135");
+            message3.setObject(passanger3);
+
+            producer.send(requestQueue, message);
+            producer.send(requestQueue, message2);
+            context.commit();
+            producer.send(requestQueue, message3);
+            context.rollback();
+
+            // for load balancing
+//            for (int i = 0; i < 10; i++) {
+//                producer.send(requestQueue, message);
+//            }
+
+            JMSConsumer consumer = context.createConsumer(replyQueue);
+            for (int i = 0; i < 3; i++) {
+                MapMessage replyMessage = (MapMessage) consumer.receive();
+                if (replyMessage.getBoolean("eligible")) {
+                    System.out.println("Passanger " + passanger.getFirstName() + " " + passanger.getLastName() + " is eligible to fly with us.");
+                } else {
+                    System.out.println("Passanger " + passanger.getFirstName() + " " + passanger.getLastName() + " is not eligible to fly with us.");
+                }
+            }
+
+        } catch (JMSException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+}
