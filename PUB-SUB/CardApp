@@ -1,0 +1,33 @@
+package jms.har;
+
+import javax.jms.JMSException;
+import javax.jms.MapMessage;
+import javax.jms.ObjectMessage;
+import javax.jms.Queue;
+import javax.jms.Topic;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
+public class CardApp {
+
+public static void main(String[] args) throws NamingException
+{
+InitialContext intialcontext=new InitialContext();
+Topic topic=(Topic)initialcontext.lookup("topic/emptopic");
+try(ActiveMQConnectionFactory cf=new ActiveMQConnectionFactory();
+JmsContext jmscontext=cf.createContext)
+{
+
+Card card=new Card();
+card.setUserid("har");
+card.setFirstName("harpriya");
+card.setLastName("kaur");
+card.setPwd("abc123");
+ObjectMessage objmsg=jmscontext.creatObjectMessage();
+objmsg.setObject(card);
+
+for(int i=0;i<10;i++)
+jmscontext.createProducer().send(topic,card);
+};
+}
+}
