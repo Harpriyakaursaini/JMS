@@ -1,0 +1,40 @@
+package jms.har;
+
+import javax.jms.MapMessage;
+import javax.jms.ObjectMessage;
+import javax.jms.Queue;
+import javax.jms.Topic;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
+public class ClaimManagementApp {
+public static void main(String[] args) throws NamingException
+{
+
+InitialContext intialcontext=new InitialContext();
+Queue claimQueue=(Queue)initialcontext.lookup("queue/claimQueue");
+
+try(ActiveMQConnectionFactory cf=new ActiveMQConnectionFactory();
+JmsContext jmscontext=cf.createContext)
+{
+
+JmsProducer producer=jmscontext.createProducer();
+//filtering using clauses in and like
+JMSConsumer consumer=cf.createConsumer(replyQueue,"insuranceprovider IN ('blue cross',''american') AND NOT IN ('united')
+AND doctorname Like H_ ");
+Claim claim=new Claim();
+claim.setInsuranceprovider("blue cross");
+claim.setDoctorname("H");
+claim.setClaimamt(1000f);
+claim.setDoctortype("gyna");
+ObjectMessage objmsg=jmscontext.creatObjectMessage();
+objmsg.setObject(claim);
+
+producer.send(requestQueue,objmsg);
+
+
+Claim claim1=consumer.recieveBody(Claim.class);
+System.out.println(claim1.getClaimamt());
+};
+}
+}
